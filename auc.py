@@ -1,148 +1,59 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from random import randint
 
-rangex = input("Enter Range: ")
+lowerbound = input("Enter lower bound: ")
+upperbound = input("Enter upper bound: ")
 randPoints = input("Number of Random Points: ")
-def firstQuadrent(rangex, randPoints):
-    # 0 < x,y < infinity
-    xAxis = range(0, rangex+1)
-    yAxis = []
-    n = 0
-    sX = 0
-    sY = 0
-    undercurve = 0 
-    upperlimit = 0
-    
-    def f(x):
-        y = x
-        return y
-    
-    while n <= rangex:
-        if f(n) > upperlimit:
-            upperlimit = f(n)
-        yAxis.append(f(n))
-        n+=1
-    n = 0 
-    while n <= randPoints:
-        sX = randint(0,rangex)
-        sY = randint(0, upperlimit)
-        if sY <= f(sX):
-            undercurve+=1
-        plt.plot([sX], [sY], marker='o', markersize=3, color="red")
-        n+=1
-    plt.plot(xAxis, yAxis)
-    plt.axis([0, rangex, 0, upperlimit])
-    
-    print(undercurve)
-    print("Area = "+str(upperlimit * rangex * undercurve / randPoints))
 
-def secondQuadrent(rangex, randPoints):
-    # 0 < y < infinity && -infinity < x < 0
-    xAxis = range(rangex,1)
-    yAxis = []
-    n = 0
-    sX = 0
-    sY = 0
-    undercurve = 0 
-    upperlimit = 0
-    
-    def f(x):
-        #Abs Function
-        if x > 0:
-            y = x
-        else:
-            y = -1*x
-        return y
-    
-    while n >= rangex:
-        if f(n) > upperlimit:
-            upperlimit = f(n)
-        yAxis.append(f(n))
-        n-=1
-    n = 0 
-    while n <= randPoints:
-        sX = randint(rangex,0)
-        sY = randint(0, upperlimit)
-        if sY <= f(sX):
-            undercurve+=1
-        plt.plot([sX], [sY], marker='o', markersize=3, color="red")
-        n+=1
-    plt.plot(xAxis, yAxis)
-    plt.axis([0, rangex, 0, upperlimit])
-    
-    print(undercurve)
-    print("Area = "+str((-1)*upperlimit * rangex * undercurve / randPoints))
+xAxis = range(lowerbound, upperbound+1)
+yAxis = []
+sX = 0
+sY = 0
+undercurve = 0 
+upperlimit = 0
+lowerlimit = 0
+n = 0
+def f(x):
+    y = x
+    return y
+#------
+while n >= lowerbound:
+    if f(n) < lowerlimit:
+        lowerlimit = f(n)
+    yAxis.insert(0, f(n))
+    n-=1
+n = 1  
+#------
+while n <= upperbound:
+    if f(n) > upperlimit:
+        upperlimit = f(n)
+    yAxis.append(f(n))
+    n+=1
+n = 0
 
-def thirdQuadrent(rangex, randPoints):
-    # -infinity < x,y < 0
-    xAxis = range(rangex, 1)
-    yAxis = []
-    n = 0
-    sX = 0
-    sY = 0
-    undercurve = 0 
-    lowerlimit = 0
-    
-    def f(x):
-        y = x
-        return y
-    
-    while n >= rangex:
-        if f(n) < lowerlimit:
-            lowerlimit = f(n)
-        yAxis.append(f(n))
-        n-=1
-    n = 0 
-    while n <= randPoints:
-        sX = randint(rangex, 0)
-        sY = randint(lowerlimit,0)
-        if sY >= f(sX):
-            undercurve+=1
-        plt.plot([sX], [sY], marker='o', markersize=3, color="red")
-        n+=1
-    plt.plot(xAxis, yAxis)
-    plt.axis([rangex, 0, lowerlimit, 0])
-    
-    print(undercurve)
-    print("Area = "+str(lowerlimit * rangex * undercurve / randPoints))
+while n <= randPoints:
+    sX = randint(lowerbound,upperbound)
+    sY = randint(lowerlimit, upperlimit)
+    if sY <= f(sX) and sY > 0:
+        undercurve+=1
+    if sY >= f(sX) and sY < 0:
+        undercurve+=1
+    plt.plot([sX], [sY], marker='o', markersize=3, color="red")
+    n+=1
+#-----Axis
+x = np.linspace(0.2,10,100)
 
-def fourthQuadrent(rangex, randPoints):
-    # -infinity < y < 0 && 0 < x < infinity
-    xAxis = range(0, rangex+1)
-    yAxis = []
-    n = 0
-    sX = 0
-    sY = 0
-    undercurve = 0 
-    lowerlimit = 0
-    
-    def f(x):
-        y = -x
-        return y
-    
-    while n <= rangex:
-         if f(n) < lowerlimit:
-            lowerlimit = f(n)
-         yAxis.append(f(n))
-         n+=1
-    n = 0 
-    while n <= randPoints:
-        sX = randint(0, rangex+1)
-        sY = randint(lowerlimit,0)
-        if sY >= f(sX):
-            undercurve+=1
-        plt.plot([sX], [sY], marker='o', markersize=3, color="red")
-        n+=1
-    plt.plot(xAxis, yAxis)
-    plt.axis([rangex, 0, lowerlimit, 0])
-    
-    print(undercurve)
-    print("Area = "+str(lowerlimit * rangex * undercurve / randPoints))
-fourthQuadrent(rangex, randPoints)
-"""
-if rangex < 0:
-    thirdQuadrent(rangex, randPoints)
-else:
-    firstQuadrent(rangex, randPoints)
-"""
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+#-----
+plt.plot(xAxis, yAxis)
+plt.axis([lowerbound, upperbound, lowerlimit, upperlimit])
+
+print(undercurve)
+print(abs(upperlimit) + abs(lowerlimit))
+print(abs(upperbound) + abs(lowerbound))
+print(undercurve / randPoints)
+print(randPoints)
+print("Area = "+str((abs(upperlimit) + abs(lowerlimit)) * (abs(upperbound) + abs(lowerbound)) * undercurve / randPoints))
 plt.show()
